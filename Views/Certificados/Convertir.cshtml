@@ -1,0 +1,73 @@
+@{
+ViewData["Title"] = "Convertir a PFX";
+}
+
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div class="d-flex align-items-center gap-3 mb-3">
+<span class="icono-arca"><i class="bi bi-file-earmark-lock2"></i></span>
+<div>
+<h1 class="h4 mb-0 texto-navy">Convertir certificado de AFIP a .pfx</h1>
+<div class="text-muted small">Paso 2: combinar el .crt de AFIP con la clave privada</div>
+</div>
+</div>
+
+<div class="card card-arca">
+<div class="card-body p-4">
+<p class="text-muted small">
+Una vez que AFIP te entrego el certificado (.crt), subilo aca junto
+con la clave privada (.key) que se genero al crear el CSR. Se van a
+combinar en un unico archivo .pfx (sin contrasena), el formato que
+suelen pedir las librerias de Facturacion Electronica.
+</p>
+
+@if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+{
+<div class="alert alert-danger small">
+<i class="bi bi-exclamation-triangle me-1"></i>
+@ViewData.ModelState[string.Empty]!.Errors[0].ErrorMessage
+</div>
+}
+
+<form method="post" action="/Certificados/ConvertirAPfx" enctype="multipart/form-data">
+@Html.AntiForgeryToken()
+
+<div class="mb-3">
+<label for="archivoCrt" class="form-label">Certificado (.crt) entregado por AFIP</label>
+<input type="file" class="form-control @(ViewData.ModelState["archivoCrt"]?.Errors.Count > 0 ? "is-invalid" : "")"
+id="archivoCrt" name="archivoCrt" accept=".crt,.cer,.pem" />
+@if (ViewData.ModelState["archivoCrt"]?.Errors.Count > 0)
+{
+<div class="invalid-feedback">@ViewData.ModelState["archivoCrt"]!.Errors[0].ErrorMessage</div>
+}
+</div>
+
+<div class="mb-4">
+<label for="archivoKey" class="form-label">Clave privada (.key)</label>
+<input type="file" class="form-control @(ViewData.ModelState["archivoKey"]?.Errors.Count > 0 ? "is-invalid" : "")"
+id="archivoKey" name="archivoKey" accept=".key,.pem" />
+@if (ViewData.ModelState["archivoKey"]?.Errors.Count > 0)
+{
+<div class="invalid-feedback">@ViewData.ModelState["archivoKey"]!.Errors[0].ErrorMessage</div>
+}
+</div>
+
+<button type="submit" class="btn btn-arca px-4">
+<i class="bi bi-file-earmark-arrow-down me-1"></i> Convertir y descargar .pfx
+</button>
+<a href="/Certificados" class="btn btn-outline-arca px-4">
+<i class="bi bi-arrow-left me-1"></i> Volver a generar un CSR
+</a>
+</form>
+</div>
+</div>
+
+<div class="alert bg-arca-soft border-0 mt-4 small">
+<i class="bi bi-info-circle texto-navy me-1"></i>
+<strong>Importante:</strong> el .crt y la .key tienen que corresponder
+al mismo par (el certificado que AFIP emitio para el CSR generado
+con esa clave privada especifica). Si no coinciden, la conversion
+va a fallar. El .pfx se genera sin contrasena.
+</div>
+</div>
+</div>
