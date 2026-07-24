@@ -156,36 +156,36 @@ public class GeneradorCsrAfip
 
   private static string ArmarInstructivo(string cuit, string razonSocial, string alias, string nombreBase)
   {
-    return $"""
-      Certificado Digital para Facturacion Electronica (AFIP) - {razonSocial}
-    C.U.I.T.: {cuit}
-    Alias del certificado: {alias}
-    Generado: {DateTime.Now:dd/MM/yyyy HH:mm}
-
-    Este paquete contiene:
-    - {nombreBase}.csr  -> El pedido de certificado (Certificate Signing Request).
-      Esto es lo que se sube a AFIP.
-      - {nombreBase}.key  -> La clave privada. GUARDALA A BUEN RESGUARDO y no la compartas.
-      Sin ella no vas a poder usar el certificado que emita AFIP.
-
-      Pasos siguientes en el sitio de AFIP (esto AFIP lo hace de forma manual,
-                                            no se puede automatizar via API publica):
-
-    1. Entrar a https://www.afip.gob.ar/ws/ con Clave Fiscal (nivel de
-    seguridad 3) del contribuyente (o de quien tenga la relacion de
-                                    apoderado/administrador de relaciones).
-      2. Ir a "Administracion de Certificados Digitales".
-      3. Elegir "Nuevo Certificado" y pegar el contenido completo del
-      archivo {nombreBase}.csr (incluyendo las lineas
-                                -----BEGIN CERTIFICATE REQUEST----- y -----END CERTIFICATE REQUEST-----).
-      4. AFIP va a emitir el certificado (.crt). Descargalo.
-      5. Ir al "Administrador de Relaciones de Clave Fiscal" y asociar ese
-      certificado al servicio "Web Service de Facturacion Electronica"
-      (WSFE / WSFEv1), autorizando la relacion entre el CUIT y el
-      certificado para ese servicio.
-      6. Con el .crt que entrego AFIP + la {nombreBase}.key generada aca,
-    tu sistema ya puede autenticarse contra el WSAA y facturar por
-      WSFE.
-      """;
-    }
+    var sb = new StringBuilder();
+    sb.Append($"Certificado Digital para Facturacion Electronica (AFIP) - {razonSocial}\n");
+    sb.Append($"C.U.I.T.: {cuit}\n");
+    sb.Append($"Alias del certificado: {alias}\n");
+    sb.Append($"Generado: {DateTime.Now:dd/MM/yyyy HH:mm}\n");
+    sb.Append("\n");
+    sb.Append("Este paquete contiene:\n");
+    sb.Append($"  - {nombreBase}.csr  -> El pedido de certificado (Certificate Signing Request).\n");
+    sb.Append("                         Esto es lo que se sube a AFIP.\n");
+    sb.Append($"  - {nombreBase}.key  -> La clave privada. GUARDALA A BUEN RESGUARDO y no la compartas.\n");
+    sb.Append("                         Sin ella no vas a poder usar el certificado que emita AFIP.\n");
+    sb.Append("\n");
+    sb.Append("Pasos siguientes en el sitio de AFIP (esto AFIP lo hace de forma manual,\n");
+    sb.Append("no se puede automatizar via API publica):\n");
+    sb.Append("\n");
+    sb.Append("1. Entrar a https://www.afip.gob.ar/ws/ con Clave Fiscal (nivel de\n");
+    sb.Append("   seguridad 3) del contribuyente (o de quien tenga la relacion de\n");
+    sb.Append("   apoderado/administrador de relaciones).\n");
+    sb.Append("2. Ir a \"Administracion de Certificados Digitales\".\n");
+    sb.Append("3. Elegir \"Nuevo Certificado\" y pegar el contenido completo del\n");
+    sb.Append($"   archivo {nombreBase}.csr (incluyendo las lineas\n");
+    sb.Append("   -----BEGIN CERTIFICATE REQUEST----- y -----END CERTIFICATE REQUEST-----).\n");
+    sb.Append("4. AFIP va a emitir el certificado (.crt). Descargalo.\n");
+    sb.Append("5. Ir al \"Administrador de Relaciones de Clave Fiscal\" y asociar ese\n");
+    sb.Append("   certificado al servicio \"Web Service de Facturacion Electronica\"\n");
+    sb.Append("   (WSFE / WSFEv1), autorizando la relacion entre el CUIT y el\n");
+    sb.Append("   certificado para ese servicio.\n");
+    sb.Append($"6. Con el .crt que entrego AFIP + la {nombreBase}.key generada aca,\n");
+    sb.Append("   tu sistema ya puede autenticarse contra el WSAA y facturar por\n");
+    sb.Append("   WSFE.\n");
+    return sb.ToString();
+  }
 }
